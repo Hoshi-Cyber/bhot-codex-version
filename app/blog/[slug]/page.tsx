@@ -1,21 +1,32 @@
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import SEO from "../../../components/SEO";
 import SocialShare from "../../../components/SocialShare";
-import { getPostBySlug } from "../../../lib/posts";
+import { getPostBySlug, getAllPosts } from "../../../lib/posts";
+import { notFound } from "next/navigation";
 
-interface Props {
-  params: { slug: string };
+type Params = {
+  slug: string;
+};
+
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post: { slug: string }) => ({
+    slug: post.slug,
+  }));
 }
 
-export default async function PostPage({ params }: Props) {
+export default async function PostPage({ params }: { params: Params }) {
   const post = await getPostBySlug(params.slug);
-  if (!post) return <div>Not found</div>;
+
+  if (!post) notFound();
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    datePublished: post.date
+    datePublished: post.date,
   };
+
   return (
     <>
       <SEO title={post.title} description={post.excerpt} />
@@ -23,7 +34,7 @@ export default async function PostPage({ params }: Props) {
         segments={[
           { name: "Home", href: "/" },
           { name: "Blog", href: "/blog" },
-          { name: post.title, href: `/blog/${post.slug}` }
+          { name: post.title, href: `/blog/${post.slug}` },
         ]}
       />
       <article className="prose dark:prose-invert max-w-none">

@@ -4,16 +4,14 @@ import SEO from "../../../components/SEO";
 import SocialShare from "../../../components/SocialShare";
 import { getPostBySlug } from "../../../lib/posts";
 
-interface PageProps {
+interface Props {
   params: { slug: string };
 }
 
-export default async function PostPage({ params }: PageProps) {
+export default async function PostPage({ params }: Props) {
   const post = await getPostBySlug(params.slug);
 
-  if (!post) {
-    notFound(); // more idiomatic in Next.js 13+ app dir
-  }
+  if (!post) return notFound(); // ✅ Proper return to stop execution
 
   const schema = {
     "@context": "https://schema.org",
@@ -45,3 +43,4 @@ export default async function PostPage({ params }: PageProps) {
     </>
   );
 }
+

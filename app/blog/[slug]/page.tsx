@@ -1,30 +1,25 @@
+import { notFound } from "next/navigation";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import SEO from "../../../components/SEO";
 import SocialShare from "../../../components/SocialShare";
-import { getPostBySlug, getAllPosts } from "../../../lib/posts";
-import { notFound } from "next/navigation";
+import { getPostBySlug } from "../../../lib/posts";
 
-type Params = {
-  slug: string;
-};
-
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post: { slug: string }) => ({
-    slug: post.slug,
-  }));
+interface PageProps {
+  params: { slug: string };
 }
 
-export default async function PostPage({ params }: { params: Params }) {
+export default async function PostPage({ params }: PageProps) {
   const post = await getPostBySlug(params.slug);
 
-  if (!post) notFound();
+  if (!post) {
+    notFound(); // more idiomatic in Next.js 13+ app dir
+  }
 
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    datePublished: post.date,
+    datePublished: post.date
   };
 
   return (
@@ -34,7 +29,7 @@ export default async function PostPage({ params }: { params: Params }) {
         segments={[
           { name: "Home", href: "/" },
           { name: "Blog", href: "/blog" },
-          { name: post.title, href: `/blog/${post.slug}` },
+          { name: post.title, href: `/blog/${post.slug}` }
         ]}
       />
       <article className="prose dark:prose-invert max-w-none">

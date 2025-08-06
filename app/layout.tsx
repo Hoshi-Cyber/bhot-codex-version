@@ -1,9 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "next-themes";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import type { ReactNode } from "react";
+import ClientLayout from "./ClientLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,17 +9,11 @@ export const metadata = {
   description: "Affiliate directory for home office technology."
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <Header />
-          <main className="min-h-screen container mx-auto px-4 py-8">
-            {children}
-          </main>
-          <Footer />
-        </ThemeProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
